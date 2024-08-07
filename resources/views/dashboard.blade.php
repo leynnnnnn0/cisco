@@ -10,28 +10,28 @@
                     <table class="w-full border border-gray-200">
                         <thead class="bg-black/10 p-4">
                         <tr>
-                            <th class="text-start p-2 border border-gray-300">Agent Name</th>
-                            <th class="text-start p-2 border border-gray-300">Status</th>
-                            <th class="text-start p-2 border border-gray-300">Time in Status</th>
-                            <th class="text-start p-2 border border-gray-300">Extension</th>
-                            <th class="text-start p-2 border border-gray-300">Actions</th>
+                            <x-th>Agent</x-th>
+                            <x-th>Status</x-th>
+                            <x-th>Time in Status</x-th>
+                            <x-th>Extension</x-th>
+                            <x-th>Actions</x-th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($users as $user)
                             <tr>
-                                <td class="text-start px-2 border border-gray-300">{{ $user->name }}</td>
-                                <td class="text-start px-2 border border-gray-300">Break</td>
-                                <td class="text-start px-2 border border-gray-300">00:13:34</td>
-                                <td class="text-start px-2 border border-gray-300">101001</td>
-                                <td class="text-start px-2 border border-gray-300">Actions</td>
+                                <x-td>{{ $user->name }}</x-td>
+                                <x-td>Unknown</x-td>
+                                <x-td>Unknown</x-td>
+                                <x-td>Unknown</x-td>
+                                <x-td>Unknown</x-td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
             </section>
-            <section class="h-1/2 bg-red-500 rounded-lg gap-2"></section>
+            <section class="h-1/2 rounded-lg gap-2"></section>
         </div>
 
     </div>
