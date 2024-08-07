@@ -23,7 +23,7 @@
                 @include('layouts.navigation')
             </nav>
             <!-- Page Content -->
-            <main class="flex-1">
+            <main class="flex-1 h-screen">
                 {{ $slot }}
             </main>
         </div>
