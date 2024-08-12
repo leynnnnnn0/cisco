@@ -129,9 +129,21 @@
                 localStorage.setItem('previousStartingTime', this.startingTime);
                 this.updateTime();
             },
-            updateStatus(status){
+            async updateStatus(status){
                 localStorage.setItem('previousStatus', status)
                 this.status = status
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                await fetch('/change-status/123', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                       status: this.status
+                    })
+                }).then(result => console.log(result.json()))
+                    .catch(err => console.log(err))
                 this.resetTimer()
             }
         }));

@@ -2,11 +2,9 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
+use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -18,7 +16,7 @@ class StatusChange implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(public User $user, public $status)
     {
         //
     }
@@ -29,9 +27,15 @@ class StatusChange implements ShouldBroadcastNow
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
 
-    public function shouldBroadcastWith()
+    public function broadcastWith()
     {
-        return [];
+        return [
+            'id' => $this->user->id,
+            'name' => $this->user->name,
+            'status' => $this->status,
+            'start_time' => round(microtime(true) * 1000),
+
+        ];
     }
     public function broadcastOn(): array
     {

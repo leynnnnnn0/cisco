@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StatusController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+
+Route::post('/change-status/{id}', [StatusController::class, 'update', 'id']);
 
 Route::get('/', function () {
     $users = User::get();
