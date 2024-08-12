@@ -26,7 +26,9 @@
                     <x-td>
                         <span x-data="activeUsers" x-text="timeInStatus(user.start_time)"></span>
                     </x-td>
-                    <x-td>Unknown</x-td>
+                    <x-td>
+                        <span x-text="user.start_time"></span>
+                    </x-td>
                     <x-td>Unknown</x-td>
                 </tr>
             </template>
@@ -36,21 +38,18 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('activeUsers', () => ({
-            time: '',
-            timeInStatus(startTime){
-              setInterval(() => {this.time = this.getTimeInStatus(startTime)}, 1000)
-                return this.time;
-            },
+            time: '0 seconds',
             getTimeInStatus(startTime) {
                 const timeDifference = Date.now() - parseInt(startTime);
                 const seconds = Math.floor(timeDifference / 1000);
                 const minutes = Math.floor(seconds / 60);
                 const hours = Math.floor(minutes / 60);
                 this.time = `${hours} hours, ${minutes % 60} minutes, ${seconds % 60} seconds`;
-                return this.time
             },
-            init(){
-
+            timeInStatus(startTime){
+                this.getTimeInStatus(startTime)
+                setInterval(() => {this.getTimeInStatus(startTime)}, 1000)
+                return this.time;
             }
         }))
     });
