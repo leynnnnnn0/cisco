@@ -26,7 +26,7 @@
                     <!-- State -->
                     <div class="flex flex-1 flex-col gap-1">
                         <span class="font-light text-md" x-text="status"></span>
-                        <span class="font-light text-xs text-gray-400">00:00:00</span>
+                        <span x-data="timerApp" x-text="time" class="font-light text-xs text-gray-400"></span>
                     </div>
                     <!-- Drop down -->
                     <div>
@@ -97,4 +97,36 @@
         </div>
     </div>
 </nav>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('timerApp', () => ({
+            time: '0 seconds',
+            startingTime: 0,
+            previousStartingTime: 0,
+            init() {
+                this.previousStartingTime = localStorage.getItem('previousStartingTime');
+                this.startingTime = this.previousStartingTime ? parseInt(this.previousStartingTime) : Date.now();
+                if (!this.previousStartingTime) {
+                    localStorage.setItem('previousStartingTime', this.startingTime);
+                }
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+            },
+            updateTime() {
+                const timeDifference = Date.now() - this.startingTime;
+                const seconds = Math.floor(timeDifference / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+                this.time = `${hours} hours, ${minutes % 60} minutes, ${seconds % 60} seconds`;
+            },
+            resetTimer() {
+                this.startingTime = Date.now();
+                localStorage.setItem('previousStartingTime', this.startingTime);
+                this.updateTime();
+            }
+        }));
+    });
+
+</script>
 
