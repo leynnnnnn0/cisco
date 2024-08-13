@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Date;
 
 class StatusChange implements ShouldBroadcastNow
 {
@@ -33,7 +34,7 @@ class StatusChange implements ShouldBroadcastNow
             'id' => $this->user->id,
             'name' => $this->user->name,
             'status' => $this->status,
-            'start_time' => round(microtime(true) * 1000),
+            'start_time' => date('Y-m-d H:i:s'),
 
         ];
     }

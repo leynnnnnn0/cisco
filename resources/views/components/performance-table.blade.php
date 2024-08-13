@@ -1,5 +1,5 @@
-@props(['users' => collect()])
-<div x-data="userNewStatus" class="border-b border-gray-300">
+@props(['users'])
+<div class="border-b border-gray-300">
     <h1 class="font-light text-lg">Team Performance</h1>
 </div>
 <div class="overflow-y-scroll">
@@ -13,34 +13,75 @@
             <x-th>Actions</x-th>
         </tr>
         </thead>
-        <tbody>
-        @foreach($users as $user)
+        <tbody x-data="usersStatus" >
+            <template x-for="user in users" x-key="user.id">
                 <tr>
                     <x-td>
-                        {{$user->name}}
-                    </x-td>
-                    <x-td id="{{$user->id}}">
-                        {{$user->statuses->first()->status ?? 'NOT READY'}}
+                        <span x-text="user.name"></span>
                     </x-td>
                     <x-td>
-                        Unknown
+                        <span x-text="user.statuses.length > 0 ? user.statuses[0].status : 'NOT READY'"></span>
                     </x-td>
                     <x-td>
-                        Unknown
+                        <span x-text="user.statuses.length > 0 ? getTimeInStatus(user.statuses[0].created_at) : getTimeInStatus(new Date().toISOString())"></span>
                     </x-td>
-                    <x-td>Unknown</x-td>
+                    <x-td></x-td>
+                    <x-td></x-td>
                 </tr>
-        @endforeach
+            </template>
+
+
         </tbody>
     </table>
 </div>
 <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('userNewStatus', () => ({
+        Alpine.data('usersStatus', () => ({
+            users: [],
+            timeInStatus: '',
+            getTimeInStatus(time) {
+                this.getTimeDifference(time)
+                setInterval(() => {
+                    this.getTimeDifference(time)
+                }, 1000);
+                return this.timeInStatus
+
+            },
+            getTimeDifference(time){
+                const timestamp1 = time;
+                const timestamp2 = new Date().toISOString();
+
+                const date1 = new Date(timestamp1);
+                const date2 = new Date(timestamp2);
+
+                const differenceInMilliseconds = date2 - date1;
+
+                const differenceInSeconds = differenceInMilliseconds / 1000;
+
+                const hours = Math.floor(differenceInSeconds / 3600);
+                const minutes = Math.floor((differenceInSeconds % 3600) / 60);
+                const seconds = Math.floor(differenceInSeconds % 60);
+
+                this.timeInStatus = [
+                    hours.toString().padStart(2, '0'),
+                    minutes.toString().padStart(2, '0'),
+                    seconds.toString().padStart(2, '0')
+                ].join(':');
+            },
             init(){
+                this.users = @json($users);
+                console.log(typeof this.users)
                 Echo.private('status')
                     .listen('StatusChange', e => {
-                        document.getElementById(e.id).innerText = e.status;
+                        this.users = this.users.map(user => {
+                            if(user.id === e.id){
+                                if(user.statuses.length > 0){
+                                    user.statuses[0].created_at = e.start_time;
+                                    user.statuses[0].status = e.status;
+                                }
+                            }
+                            return user;
+                        })
                     })
             }
         }));
