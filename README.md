@@ -1,6 +1,6 @@
-# Cisco Status Dashboard
+# Cisco Clone
 
-**Cisco Status Dashboard** is an innovative web application designed for real-time employee status monitoring and management. This platform offers a dynamic and intuitive dashboard to track employee activities, calculate payroll, and assess adherence.
+**Cisco Clone** is an innovative web application designed for real-time employee status monitoring and management. This platform offers a dynamic and intuitive dashboard to track employee activities, calculate payroll, and assess adherence.
 
 ## Features
 
