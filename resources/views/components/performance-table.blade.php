@@ -19,7 +19,7 @@
                     <x-td>
                         <span x-text="user.name"></span>
                     </x-td>
-                    <x-td>
+                    <x-td x-bind:class="user.statuses.length > 0 ? tagColor(user.statuses[0].status) : tagColor('NOT READY')">
                         <span x-text="user.statuses.length > 0 ? user.statuses[0].status : 'NOT READY'"></span>
                     </x-td>
                     <x-td>
@@ -39,6 +39,18 @@
         Alpine.data('usersStatus', () => ({
             users: [],
             timeInStatus: '',
+            tagColor(status) {
+                switch(status){
+                    case 'READY':
+                        return 'bg-green-500 text-white';
+                    case 'MEETING':
+                        return 'bg-blue-500 text-white';
+                    case 'BREAK' || 'LUNCH':
+                        return 'bg-yellow-500 text-white';
+                    default:
+                        return 'bg-red-500 text-white'
+                }
+            },
             getTimeInStatus(time) {
                 this.getTimeDifference(time)
                 setInterval(() => {
