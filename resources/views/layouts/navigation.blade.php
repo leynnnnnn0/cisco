@@ -133,7 +133,7 @@
                 localStorage.setItem('previousStatus', status)
                 this.status = status
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                await fetch('/change-status/123', {
+                await fetch('/change-status', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
