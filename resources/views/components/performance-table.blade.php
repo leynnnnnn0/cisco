@@ -82,7 +82,6 @@
             },
             init(){
                 this.users = @json($users);
-                console.log(typeof this.users)
                 Echo.private('status')
                     .listen('StatusChange', e => {
                         this.users = this.users.map(user => {
@@ -90,10 +89,12 @@
                                 if(user.statuses.length > 0){
                                     user.statuses[0].created_at = e.start_time;
                                     user.statuses[0].status = e.status;
+                                }else {
                                 }
                             }
                             return user;
                         })
+                        console.log(this.users)
                     })
             }
         }));
