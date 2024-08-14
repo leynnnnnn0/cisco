@@ -9,6 +9,7 @@
         <tr>
             <x-th>Status</x-th>
             <x-th>Tag Time</x-th>
+            <x-th>Duration</x-th>
         </tr>
         </thead>
         <tbody>
@@ -19,6 +20,9 @@
                     </x-td>
                     <x-td>
                         <span x-text="new Date(date.created_at).toLocaleString()"></span>
+                    </x-td>
+                    <x-td>
+                        <span x-text="date.duration"></span>
                     </x-td>
                 </tr>
             </template>

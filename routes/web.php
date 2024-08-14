@@ -1,6 +1,5 @@
 <?php
 
-use App\Events\HistoryRequest;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatusController;
 use App\Models\Status;
@@ -20,11 +19,33 @@ Route::get('/', function () {
 
 Route::get('/tags-history', function(){
     $tags = Status::where('user_id', Auth::id())->whereDate('created_at', Carbon::today())->get();
+    $tags = $tags->map(function ($tag, $index) use ($tags) {
+        if ($index < count($tags) - 1) {
+            $tagTime = new DateTime($tag->created_at->format('Y-m-d H:i:s'));
+            $endTagTime = new DateTime($tags[$index + 1]->created_at->format('Y-m-d H:i:s'));
+            $interval = $endTagTime->diff($tagTime);
+            $tag->duration = sprintf('%02d:%02d:%02d', $interval->h, $interval->i, $interval->s);
+        } else {
+            $tag->duration = 'N/A'; // Or some other default value for the last item
+        }
+        return $tag;
+    });
    return view('tags-history', ['tags' => $tags]);
 });
 
 Route::post('/tags', function(){
     $tags = Status::where('user_id', Auth::id())->whereDate('created_at', request('date'))->get();
+    $tags = $tags->map(function ($tag, $index) use ($tags) {
+        if ($index < count($tags) - 1) {
+            $tagTime = new DateTime($tag->created_at->format('Y-m-d H:i:s'));
+            $endTagTime = new DateTime($tags[$index + 1]->created_at->format('Y-m-d H:i:s'));
+            $interval = $endTagTime->diff($tagTime);
+            $tag->duration = sprintf('%02d:%02d:%02d', $interval->h, $interval->i, $interval->s);
+        } else {
+            $tag->duration = 'N/A'; // Or some other default value for the last item
+        }
+        return $tag;
+    });
    return json_encode(['data' => $tags]);
 });
 
