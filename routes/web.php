@@ -16,7 +16,12 @@ Route::get('/', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/tags-history', function(){
-   return view('tags-history');
+    $tags = User::with('statuses')->whereDate('created_at', Carbon::today())->get();
+   return view('tags-history', ['tags' => $tags]);
+});
+
+Route::get('/tags', function(){
+   return json_encode(['success' => true]);
 });
 
 Route::middleware('auth')->group(function () {

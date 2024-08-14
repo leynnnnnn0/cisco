@@ -19,3 +19,7 @@ Broadcast::channel('room', function (User $user) {
        'start_time' => round(microtime(true) * 1000),
    ];
 });
+
+Broadcast::channel('history', function (User $user){
+    return true;
+});
