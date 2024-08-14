@@ -1,9 +1,12 @@
 <?php
 
+use App\Events\HistoryRequest;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatusController;
+use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/change-status', [StatusController::class, 'update']);
@@ -16,12 +19,13 @@ Route::get('/', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/tags-history', function(){
-    $tags = User::with('statuses')->whereDate('created_at', Carbon::today())->get();
+    $tags = Status::where('user_id', Auth::id())->whereDate('created_at', Carbon::today())->get();
    return view('tags-history', ['tags' => $tags]);
 });
 
-Route::get('/tags', function(){
-   return json_encode(['success' => true]);
+Route::post('/tags', function(){
+    $tags = Status::where('user_id', Auth::id())->whereDate('created_at', request('date'))->get();
+   return json_encode(['data' => $tags]);
 });
 
 Route::middleware('auth')->group(function () {

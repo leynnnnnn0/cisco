@@ -20,6 +20,3 @@ Broadcast::channel('room', function (User $user) {
    ];
 });
 
-Broadcast::channel('history', function (User $user){
-    return true;
-});
