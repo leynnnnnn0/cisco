@@ -18,7 +18,7 @@
                         <span x-text="date.status"></span>
                     </x-td>
                     <x-td>
-                        <span x-text="date.created_at"></span>
+                        <span x-text="new Date(date.created_at).toLocaleString()"></span>
                     </x-td>
                 </tr>
             </template>
