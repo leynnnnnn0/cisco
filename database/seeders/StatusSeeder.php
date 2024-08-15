@@ -16,26 +16,26 @@ class StatusSeeder extends Seeder
     public function run(): void
     {
         $statuses = ['READY', 'LUNCH', 'BREAK', 'PERSONAL TIME'];
-        $startDate = Carbon::create(2024, 8, 13, 8);
-        $endDate = Carbon::create(2024, 8, 13, 17);  // 5 PM
+        $startDate = Carbon::create(2024, 8, 13, 8, 45);
+        $endDate = Carbon::create(2024, 8, 13, 16, 15);  // 5 PM
         Status::create([
             'user_id' => 1,
             'status' => 'READY',
-            'created_at' => $startDate,
+            'created_at' => Carbon::createFromFormat('H:i:s', '17:00:00')->toTimeString(),
             'updated_at' => $startDate
         ]);
 
         Status::create([
             'user_id' => 3,
             'status' => 'READY',
-            'created_at' => $startDate,
+            'created_at' => Carbon::createFromFormat('H:i:s', '17:00:00')->toTimeString(),
             'updated_at' => $startDate
         ]);
 
         Status::create([
             'user_id' => 2,
             'status' => 'READY',
-            'created_at' => $startDate,
+            'created_at' => Carbon::createFromFormat('H:i:s', '17:00:00')->toTimeString(),
             'updated_at' => $startDate
         ]);
 
@@ -49,5 +49,26 @@ class StatusSeeder extends Seeder
 
             $startDate->addMinutes(rand(1, 60));
         }
+
+        Status::create([
+            'user_id' => 1,
+            'status' => 'END OF SHIFT',
+            'created_at' => $startDate,
+            'updated_at' => $startDate
+        ]);
+
+        Status::create([
+            'user_id' => 3,
+            'status' => 'END OF SHIFT',
+            'created_at' => $startDate,
+            'updated_at' => $startDate
+        ]);
+
+        Status::create([
+            'user_id' => 2,
+            'status' => 'END OF SHIFT',
+            'created_at' => $startDate,
+            'updated_at' => $startDate
+        ]);
     }
 }

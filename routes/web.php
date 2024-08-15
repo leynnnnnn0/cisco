@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatusController;
+use App\Models\Schedule;
 use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
@@ -30,8 +31,9 @@ Route::get('/', function () {
 
 Route::get('/tags-history', function(){
     $tags = Status::where('user_id', Auth::id())->whereDate('created_at', Carbon::today())->get();
+    $schedule = Schedule::where('user_id', Auth::id())->first();
     $tags = getTags($tags);
-   return view('tags-history', ['tags' => $tags]);
+   return view('tags-history', ['tags' => $tags, 'schedule' => $schedule]);
 })->middleware('auth');
 
 /**

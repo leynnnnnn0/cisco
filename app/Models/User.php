@@ -29,6 +29,11 @@ class User extends Authenticatable
         return $this->hasMany(Status::class);
     }
 
+    public function schedule()
+    {
+        return $this->hasOne(Schedule::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
