@@ -30,22 +30,17 @@ Route::get('/', function () {
 
 Route::get('/tags-history', function(){
     $tags = Status::where('user_id', Auth::id())->whereDate('created_at', Carbon::today())->get();
-    $tags = $tags->map(function ($tag, $index) use ($tags) {
-        if ($index < count($tags) - 1) {
-            $tagTime = new DateTime($tag->created_at->format('Y-m-d H:i:s'));
-            $endTagTime = new DateTime($tags[$index + 1]->created_at->format('Y-m-d H:i:s'));
-            $interval = $endTagTime->diff($tagTime);
-            $tag->duration = sprintf('%02d:%02d:%02d', $interval->h, $interval->i, $interval->s);
-        } else {
-            $tag->duration = 'N/A'; // Or some other default value for the last item
-        }
-        return $tag;
-    });
+    $tags = getTags($tags);
    return view('tags-history', ['tags' => $tags]);
 })->middleware('auth');
 
-Route::post('/tags', function(){
-    $tags = Status::where('user_id', Auth::id())->whereDate('created_at', request('date'))->get();
+/**
+ * @param $tags
+ * @return mixed
+ * @throws Exception
+ */
+function getTags($tags): mixed
+{
     $tags = $tags->map(function ($tag, $index) use ($tags) {
         if ($index < count($tags) - 1) {
             $tagTime = new DateTime($tag->created_at->format('Y-m-d H:i:s'));
@@ -57,7 +52,13 @@ Route::post('/tags', function(){
         }
         return $tag;
     });
-   return json_encode(['data' => $tags]);
+    return $tags;
+}
+
+Route::post('/tags', function(){
+    $tags = Status::where('user_id', Auth::id())->whereDate('created_at', request('date'))->get();
+    $tags = getTags($tags);
+    return json_encode(['data' => $tags]);
 });
 
 Route::middleware('auth')->group(function () {
