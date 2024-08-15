@@ -21,7 +21,7 @@ return new class extends Migration
         });
 
         // Modify the 'status' column to use ENUM type
-        DB::statement("ALTER TABLE `statuses` CHANGE `status` `status` ENUM('READY', 'PERSONAL TIME', 'BREAK', 'LUNCH', 'MEETING') NOT NULL");
+        DB::statement("ALTER TABLE `statuses` CHANGE `status` `status` ENUM('READY', 'PERSONAL TIME', 'BREAK', 'LUNCH', 'MEETING', 'END OF SHIFT') NOT NULL");
     }
 
     /**

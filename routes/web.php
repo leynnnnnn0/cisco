@@ -8,6 +8,17 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+Route::post('/end-of-shift', function(){
+   Auth::user()->statuses()->create([
+      'status' => 'END OF SHIFT'
+   ]);
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
+});
+
+
 Route::post('/change-status', [StatusController::class, 'update']);
 
 Route::get('/', function () {
@@ -31,7 +42,7 @@ Route::get('/tags-history', function(){
         return $tag;
     });
    return view('tags-history', ['tags' => $tags]);
-});
+})->middleware('auth');
 
 Route::post('/tags', function(){
     $tags = Status::where('user_id', Auth::id())->whereDate('created_at', request('date'))->get();

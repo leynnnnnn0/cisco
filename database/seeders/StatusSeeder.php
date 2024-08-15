@@ -16,8 +16,8 @@ class StatusSeeder extends Seeder
     public function run(): void
     {
         $statuses = ['READY', 'LUNCH', 'BREAK', 'PERSONAL TIME'];
-        $startDate = Carbon::create(2024, 8, 13, 8, 0, 0);
-        $endDate = Carbon::create(2024, 8, 13, 17, 0, 0);  // 5 PM
+        $startDate = Carbon::create(2024, 8, 13, 8);
+        $endDate = Carbon::create(2024, 8, 13, 17);  // 5 PM
         Status::create([
             'user_id' => 1,
             'status' => 'READY',
