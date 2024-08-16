@@ -36,10 +36,11 @@
             calculateAdherence(tagTime, schedule){
                 const difference = tagTime - schedule;
                 this.minutes += Math.abs(Math.floor((difference % 3600000) / 60000));
-                console.log(tagTime)
-                console.log(schedule)
-                console.log(this.minutes)
                 this.timeInAdherence = this.totalScheduledTime - this.minutes;
+            },
+            getNonAdherenceTime(tag, scheduledMinutes){
+                const nonAdherenceMinutes = Math.abs(parseInt(tag.duration.split(':')[1]) - scheduledMinutes);
+                this.minutes += nonAdherenceMinutes;
             },
             async init() {
                 this.tags = await @json($tags);
@@ -53,18 +54,21 @@
                         numberOfRun++;
                         return;
                     }
-                    if(tag.status === 'BREAK' && numberOfBreaks === 0){
+                    if(tag.status === 'BREAK' && numberOfBreaks === 0 && tag.duration !== 'N/A'){
+                        this.getNonAdherenceTime(tag, 15)
                         const first_break = new Date('{{ date('Y-m-d') . ' ' . $schedule->first_break }}')
                         this.calculateAdherence(tagTime, first_break);
                         numberOfBreaks++;
                         return;
                     }
-                    if(tag.status === 'LUNCH'){
+                    if(tag.status === 'LUNCH' && tag.duration !== 'N/A'){
+                        this.getNonAdherenceTime(tag, 60)
                         const lunch = new Date('{{ date('Y-m-d') . ' ' . $schedule->lunch }}')
                         this.calculateAdherence(tagTime, lunch);
                         return;
                     }
-                    if(tag.status === 'BREAK' && numberOfBreaks === 1){
+                    if(tag.status === 'BREAK' && numberOfBreaks === 1 && tag.duration !== 'N/A'){
+                        this.getNonAdherenceTime(tag, 15)
                         const second_break = new Date('{{ date('Y-m-d') . ' ' . $schedule->second_break }}')
                         this.calculateAdherence(tagTime, second_break);
                         numberOfBreaks++;
@@ -73,21 +77,10 @@
                     if(tag.status === 'END OF SHIFT' && numberOfBreaks === 1){
                         const end_of_shift = new Date('{{ date('Y-m-d') . ' ' . $schedule->end_of_shift }}')
                         this.calculateAdherence(tagTime, end_of_shift);
-                        return;
                     }
-
-
-
+                    console.log(this.minutes)
                 })
                 this.getAdherence();
-
-                {{--this.tags = await @json($tags);--}}
-                {{--const tagTime = new Date('{{ $tags[0]->created_at }}');--}}
-                {{--const start_time = new Date('{{ date('Y-m-d') . ' ' . $schedule->start_time }}');--}}
-                {{--const difference = tagTime - start_time;--}}
-                {{--const minutes = Math.floor((difference % 3600000) / 60000);--}}
-                {{--this.timeInAdherence += this.totalScheduledTime - minutes;--}}
-                {{--this.getAdherence();--}}
             }
         }));
     })
