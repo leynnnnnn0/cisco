@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="flex h-full">
+    <div x-data="employeesTagTable" class="flex h-full">
         <x-sidebar/>
         <div class="flex-1 flex flex-col gap-2 p-2">
             <div class="flex justify-between">
@@ -11,7 +11,7 @@
                     <strong>Filter by Name</strong>
                     <select name="employeeName" id="employeeName">
                         @foreach($names as $id => $name)
-                            <option value="">{{ $name }}</option>
+                            <option value="{{$id}}">{{ $name }}</option>
                         @endforeach
                     </select>
                 </section>
@@ -20,11 +20,11 @@
                     <div class="flex gap-2">
                         <div class="flex items-center gap-2">
                             <strong>From</strong>
-                            <input type="date">
+                            <input id="filterFrom" type="date">
                         </div>
                         <div class="flex items-center gap-2">
                             <strong>To</strong>
-                            <input type="date">
+                            <input id="filterTo" type="date">
                         </div>
                     </div>
                 </section>
@@ -54,6 +54,28 @@
         </div>
     </div>
 </x-app-layout>
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('employeesTagTable', () => ({
+            filterName: document.getElementById('employeeName'),
+            init(){
+                this.filterName.addEventListener('change', e => {
+                    console.log(e.target.value);
+                })
+                const filterFrom = document.getElementById('filterFrom');
+                filterFrom.addEventListener('change', e => {
+                    console.log(e.target.value)
+                })
+                const filterTo = document.getElementById('filterTo');
+                filterTo.addEventListener('change', e => {
+                    console.log(e.target.value)
+                })
+
+
+            }
+        }));
+    })
+</script>
 
 
 
