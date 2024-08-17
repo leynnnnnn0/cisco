@@ -1,7 +1,12 @@
 @props(['tags'])
-<div class="border-b border-gray-300">
-    <h1 class="font-light text-lg">Tags History</h1>
-    <input id="dateHistory" type="date" value="{{ date('Y-m-d') }}">
+<div class="flex justify-between border-b border-gray-300">
+    <div>
+        <h1 class="font-light text-lg">Tags History</h1>
+        <input id="dateHistory" type="date" value="{{ date('Y-m-d') }}">
+    </div>
+    <div>
+        <button class="bg-green-500 text-white font-bold rounded-lg px-3 py-1 hover:bg-opacity-50 transition-duration duration-300">Export Excel</button>
+    </div>
 </div>
 <div class="overflow-y-scroll">
     <table class="w-full border border-gray-200">

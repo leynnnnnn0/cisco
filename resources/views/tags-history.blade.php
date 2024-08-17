@@ -12,12 +12,12 @@
                     <strong>End Of Shift: <span>{{ $schedule->end_time }}</span></strong>
                 </div>
                 <div x-data="adherence" class="flex-1 bg-white rounded-lg p-3">
-                    <h1 class="text-lg">My Adherence</h1>
+                    <h1 class="text-lg">My Adherence Today</h1>
                     <h1 class="text-green-500 font-bold text-2xl" x-text="adherence.toFixed(2)"></h1>
                 </div>
             </section>
             <section class="h-1/2 rounded-lg gap-2">
-                <x-tags-history-table :$tags/>
+                <x-tags-history :$tags/>
             </section>
         </div>
     </div>

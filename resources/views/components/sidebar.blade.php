@@ -13,4 +13,10 @@
         :active="request()->is('tags-history')"
                     icon="fa-solid fa-chart-simple"
     >Tags History</x-sidebar-link>
+    @if(Auth::user()->is_admin === 1)
+        <x-sidebar-link :active="request()->is('employees-tag')"
+                        href="/employees-tag"
+                        icon="fa-solid fa-phone"
+        >Employees Tag</x-sidebar-link>
+    @endif
 </section>

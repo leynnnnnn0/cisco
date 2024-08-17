@@ -19,6 +19,12 @@ Route::post('/end-of-shift', function(){
     return redirect('/login');
 });
 
+Route::get('/employees-tag', function(){
+    $status = Status::latest()->paginate(20);
+    $names = User::all()->pluck('name', 'id')->toArray();
+   return view('employees-tag', ['status' => $status, 'names' => $names]);
+});
+
 
 Route::post('/change-status', [StatusController::class, 'update']);
 
