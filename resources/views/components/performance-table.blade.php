@@ -82,6 +82,7 @@
             },
             init(){
                 this.users = @json($users);
+                console.log(this.users)
                 Echo.private('status')
                     .listen('StatusChange', e => {
                         this.users = this.users.map(user => {
@@ -90,6 +91,10 @@
                                     user.statuses[0].created_at = e.start_time;
                                     user.statuses[0].status = e.status;
                                 }else {
+                                    user.statuses[0] = {
+                                        created_at: e.start_time,
+                                        status: e.status
+                                    }
                                 }
                             }
                             return user;

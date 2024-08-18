@@ -1,59 +1,20 @@
 <?php
 
-use App\Http\Controllers\ExcelController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatusController;
 use App\Models\Schedule;
 use App\Models\Status;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/excel', [ExcelController::class, 'index'])->name('index');
-
-Route::post('/end-of-shift', function(){
-   Auth::user()->statuses()->create([
-      'status' => 'END OF SHIFT'
-   ]);
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/login');
-});
-
-Route::get('/employees-tag', function(){
-    $status = Status::with('user')->latest()->paginate(20);
-    $names = User::all()->pluck('name', 'id')->toArray();
-   return view('employees-tag', ['status' => $status, 'names' => $names]);
-});
-
-Route::post('request-user-tags', function(){
-    $validated = request()->validate([
-        'id' => 'required',
-        'from' => 'required',
-        'to' => 'required',
-    ]);
-    if($validated['id'] === 'all'){
-        $status = Status::with('user')
-            ->whereBetween('created_at', [$validated['from'], $validated['to']])
-            ->latest()
-            ->paginate(20);
-    }else {
-        $status = Status::with('user')->where('user_id', $validated['id'])->latest()->paginate(20);
-    }
-    return response()->json(['success' => true, 'status' => $status, 'request' => request()->all()]);
-});
-
-
+Route::post('/end-of-shift', [StatusController::class, 'destroy'])->middleware('auth');
+Route::get('employees-tag', [StatusController::class, 'index'])->middleware('auth');
+Route::post('request-user-tags', [StatusController::class, 'search'])->middleware('auth');
 Route::post('/change-status', [StatusController::class, 'update']);
 
-Route::get('/', function () {
-    $users = User::with(['statuses' => function ($query) {
-        $query->latest()->whereDate('created_at', Carbon::today())->limit(1);
-    }])->get();
-    return view('dashboard', ['users' => $users]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/tags-history', function(){
     $tags = Status::where('user_id', Auth::id())->whereDate('created_at', Carbon::today())->get();

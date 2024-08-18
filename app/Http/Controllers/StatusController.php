@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\StatusChange;
+use App\Models\Status;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,30 @@ use Illuminate\Validation\Rule;
 
 class StatusController extends Controller
 {
+    public function index()
+    {
+        $status = Status::with('user')->latest()->paginate(20);
+        $names = User::all()->pluck('name', 'id')->toArray();
+        return view('employees-tag', ['status' => $status, 'names' => $names]);
+    }
+
+    public function search()
+    {
+        $validated = request()->validate([
+            'id' => 'required',
+            'from' => 'required',
+            'to' => 'required',
+        ]);
+        if($validated['id'] === 'all'){
+            $status = Status::with('user')
+                ->whereBetween('created_at', [$validated['from'], $validated['to']])
+                ->latest()
+                ->paginate(15);
+        }else {
+            $status = Status::with('user')->where('user_id', $validated['id'])->latest()->paginate(20);
+        }
+        return response()->json(['success' => true, 'status' => $status, 'request' => request()->all()]);
+    }
     public function update()
     {
         $allowedStatuses = ['READY', 'PERSONAL TIME', 'BREAK', 'LUNCH', 'MEETING'];
@@ -40,5 +65,16 @@ class StatusController extends Controller
                 'errors' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function destroy()
+    {
+        Auth::user()->statuses()->create([
+            'status' => 'END OF SHIFT'
+        ]);
+        Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect('/login');
     }
 }

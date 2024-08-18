@@ -31,16 +31,17 @@
                     </div>
                 </section>
             </div>
-            <table class="w-full border border-gray-200">
-                <thead class="bg-black/10 p-4">
-                <tr>
-                    <x-th>Employee Name</x-th>
-                    <x-th>Status</x-th>
-                    <x-th>Tag Time</x-th>
-                    <x-th>Duration</x-th>
-                </tr>
-                </thead>
-                <tbody>
+            <div class="overflow-y-scroll">
+                <table class="w-full border border-gray-200">
+                    <thead class="bg-black/10 p-4">
+                    <tr>
+                        <x-th>Employee Name</x-th>
+                        <x-th>Status</x-th>
+                        <x-th>Tag Time</x-th>
+                        <x-th>Duration</x-th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     <template x-for="status in data.data">
                         <tr>
                             <x-td x-text="status.user.name"></x-td>
@@ -49,8 +50,9 @@
                             <x-td></x-td>
                         </tr>
                     </template>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
             {{ $status->links() }}
         </div>
     </div>
