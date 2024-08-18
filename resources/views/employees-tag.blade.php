@@ -27,6 +27,7 @@
                             <strong>To</strong>
                             <input id="filterTo" type="date">
                         </div>
+                        <button x-bind:disabled="isDisabled" @click="search" class="ml-5 px-6 bg-gray-300 py-1 rounded-lg border border-gray-300 font-bold hover:bg-gray-50 transition-duration duration-300">Search</button>
                     </div>
                 </section>
             </div>
@@ -58,31 +59,32 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('employeesTagTable', () => ({
             data: @json($status),
+            isDisabled: false,
+            csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             filterName: document.getElementById('employeeName'),
-            init(){
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                this.filterName.addEventListener('change', e => {
+            filterFrom: document.getElementById('filterFrom'),
+            filterTo: document.getElementById('filterTo'),
+            search(){
+                if(this.filterName){
                     fetch('/request-user-tags', {
                         method: 'POST',
                         headers: {
                             "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": csrfToken
+                            "X-CSRF-TOKEN": this.csrfToken
                         },
-                        body: JSON.stringify({id: e.target.value})
+                        body: JSON.stringify({
+                            id: this.filterName.value,
+                            from: this.filterFrom.value,
+                            to: this.filterTo.value
+                        })
                     }).then(async result => {
                         const data = await result.json();
                         this.data = data.status;
-                        console.log(data);
+                        console.log(data)
                     }).catch(err => console.log(err));
-                })
-                const filterFrom = document.getElementById('filterFrom');
-                filterFrom.addEventListener('change', e => {
-                    console.log(e.target.value)
-                })
-                const filterTo = document.getElementById('filterTo');
-                filterTo.addEventListener('change', e => {
-                    console.log(e.target.value)
-                })
+                }
+            },
+            init(){
             }
         }));
     })

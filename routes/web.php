@@ -30,14 +30,19 @@ Route::get('/employees-tag', function(){
 
 Route::post('request-user-tags', function(){
     $validated = request()->validate([
-        'id' => 'required'
+        'id' => 'required',
+        'from' => 'required',
+        'to' => 'required',
     ]);
     if($validated['id'] === 'all'){
-        $status = Status::with('user')->latest()->paginate(20);
+        $status = Status::with('user')
+            ->whereBetween('created_at', [$validated['from'], $validated['to']])
+            ->latest()
+            ->paginate(20);
     }else {
         $status = Status::with('user')->where('user_id', $validated['id'])->latest()->paginate(20);
     }
-    return response()->json(['success' => true, 'status' => $status, 'request' => $validated['id']]);
+    return response()->json(['success' => true, 'status' => $status, 'request' => request()->all()]);
 });
 
 
