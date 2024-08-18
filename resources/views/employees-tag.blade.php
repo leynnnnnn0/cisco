@@ -10,6 +10,7 @@
                 <section class="flex flex-col gap-2">
                     <strong>Filter by Name</strong>
                     <select name="employeeName" id="employeeName">
+                        <option value="all" selected>All</option>
                         @foreach($names as $id => $name)
                             <option value="{{$id}}">{{ $name }}</option>
                         @endforeach
@@ -39,15 +40,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                    @foreach($status as $tag)
+                    <template x-for="status in data.data">
                         <tr>
-                            <x-td>{{ $tag->user->name }}</x-td>
-                            <x-td>{{ $tag->status }}</x-td>
-                            <x-td>{{ $tag->created_at }}</x-td>
-                            <x-td>{{ $tag->duration }}</x-td>
+                            <x-td x-text="status.user.name"></x-td>
+                            <x-td x-text="status.status"></x-td>
+                            <x-td x-text="new Date(status.created_at).toLocaleString()"></x-td>
+                            <x-td></x-td>
                         </tr>
-                    @endforeach
-
+                    </template>
                 </tbody>
             </table>
             {{ $status->links() }}
@@ -57,10 +57,23 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('employeesTagTable', () => ({
+            data: @json($status),
             filterName: document.getElementById('employeeName'),
             init(){
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                 this.filterName.addEventListener('change', e => {
-                    console.log(e.target.value);
+                    fetch('/request-user-tags', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": csrfToken
+                        },
+                        body: JSON.stringify({id: e.target.value})
+                    }).then(async result => {
+                        const data = await result.json();
+                        this.data = data.status;
+                        console.log(data);
+                    }).catch(err => console.log(err));
                 })
                 const filterFrom = document.getElementById('filterFrom');
                 filterFrom.addEventListener('change', e => {
@@ -70,8 +83,6 @@
                 filterTo.addEventListener('change', e => {
                     console.log(e.target.value)
                 })
-
-
             }
         }));
     })

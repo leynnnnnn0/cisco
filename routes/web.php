@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatusController;
 use App\Models\Schedule;
@@ -8,6 +9,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/excel', [ExcelController::class, 'index'])->name('index');
 
 Route::post('/end-of-shift', function(){
    Auth::user()->statuses()->create([
@@ -20,9 +23,21 @@ Route::post('/end-of-shift', function(){
 });
 
 Route::get('/employees-tag', function(){
-    $status = Status::latest()->paginate(20);
+    $status = Status::with('user')->latest()->paginate(20);
     $names = User::all()->pluck('name', 'id')->toArray();
    return view('employees-tag', ['status' => $status, 'names' => $names]);
+});
+
+Route::post('request-user-tags', function(){
+    $validated = request()->validate([
+        'id' => 'required'
+    ]);
+    if($validated['id'] === 'all'){
+        $status = Status::with('user')->latest()->paginate(20);
+    }else {
+        $status = Status::with('user')->where('user_id', $validated['id'])->latest()->paginate(20);
+    }
+    return response()->json(['success' => true, 'status' => $status, 'request' => $validated['id']]);
 });
 
 
