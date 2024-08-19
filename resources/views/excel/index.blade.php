@@ -16,3 +16,6 @@
         @endforeach
     </tbody>
 </table>
+<a href="status/export/">
+    Export to Excel
+</a>
