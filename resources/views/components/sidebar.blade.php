@@ -16,7 +16,11 @@
     @if(Auth::user()->is_admin === 1)
         <x-sidebar-link :active="request()->is('employees-tag')"
                         href="/employees-tag"
-                        icon="fa-solid fa-phone"
+                        icon="fa-solid fa-tag"
         >Employees Tag</x-sidebar-link>
+        <x-sidebar-link :active="request()->is('payroll')"
+                        href="/payroll"
+                        icon="fa-solid fa-money-bill"
+        >Payroll</x-sidebar-link>
     @endif
 </section>

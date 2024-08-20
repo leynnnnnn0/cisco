@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/excel', [ExcelController::class, 'index'])->name('excel');
 Route::get('status/export/{id}/{from}/{to}', [StatusController::class, 'export', 'id', 'from', 'to']);
 
+Route::get('/payroll', function (){
+   return view('payroll');
+});
+
 Route::post('/end-of-shift', [StatusController::class, 'destroy'])->middleware('auth');
 Route::get('employees-tag', [StatusController::class, 'index'])->middleware('auth');
 Route::post('request-user-tags', [StatusController::class, 'search'])->middleware('auth');
