@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/excel', [ExcelController::class, 'index'])->name('excel');
-Route::get('status/export/', [ExcelController::class, 'export']);
+Route::get('status/export/{id}/{from}/{to}', [StatusController::class, 'export', 'id', 'from', 'to']);
 
 Route::post('/end-of-shift', [StatusController::class, 'destroy'])->middleware('auth');
 Route::get('employees-tag', [StatusController::class, 'index'])->middleware('auth');

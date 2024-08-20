@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Events\StatusChange;
+use App\Exports\StatusExport;
 use App\Models\Status;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StatusController extends Controller
 {
@@ -28,11 +30,15 @@ class StatusController extends Controller
         ]);
         if($validated['id'] === 'all'){
             $status = Status::with('user')
-                ->whereBetween('created_at', [$validated['from'], $validated['to']])
+                ->whereBetween('created_at', [$validated['from'], $validated['to'] . ' 23:59:59'])
                 ->latest()
-                ->paginate(15);
+                ->get();
         }else {
-            $status = Status::with('user')->where('user_id', $validated['id'])->latest()->paginate(20);
+            $status = Status::with('user')
+                ->where('user_id', $validated['id'])
+                ->whereBetween('created_at', [$validated['from'], $validated['to'] . ' 23:59:59'])
+                ->latest()
+                ->paginate(20);
         }
         return response()->json(['success' => true, 'status' => $status, 'request' => request()->all()]);
     }
@@ -76,5 +82,15 @@ class StatusController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
         return redirect('/login');
+    }
+
+//    public function export()
+//    {
+//        return Excel::download(new StatusExport, 'users.xlsx');
+//    }
+
+    public function export($id, $from, $to)
+    {
+        return (new StatusExport)->getQuery($id, $from, $to)->download("employee-$id-history.xlsx");
     }
 }

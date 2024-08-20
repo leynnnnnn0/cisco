@@ -4,7 +4,7 @@
         <div class="flex-1 flex flex-col gap-2 p-2">
             <div class="flex justify-between">
                 <h1 class="font-light text-lg">Tags History</h1>
-                <button class="bg-green-500 text-white font-bold rounded-lg px-3 py-1 hover:bg-opacity-50 transition-duration duration-300">Export Excel</button>
+                <button @click="getExcel" class="bg-green-500 text-white font-bold rounded-lg px-3 py-1 hover:bg-opacity-50 transition-duration duration-300">Export Excel</button>
             </div>
             <div class="flex gap-3">
                 <section class="flex flex-col gap-2">
@@ -86,6 +86,27 @@
                     }).catch(err => console.log(err));
                 }
             },
+            getExcel() {
+                fetch(`status/export/${this.filterName.value}/${this.filterFrom.value}/${this.filterTo.value}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.blob();  // Convert the response to a blob
+                    })
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);  // Create a URL for the blob
+                        const a = document.createElement('a');         // Create an anchor element
+                        a.href = url;
+                        a.download = `history-from-${this.filterFrom.value}-to-${this.filterTo.value}`;  // Set the file name
+                        document.body.appendChild(a);  // Append the anchor to the document body
+                        a.click();  // Trigger the download
+                        a.remove();  // Remove the anchor from the document
+                        window.URL.revokeObjectURL(url);  // Clean up the URL object
+                    })
+                    .catch(err => console.log(err));
+            },
+
             init(){
             }
         }));
