@@ -24,7 +24,7 @@ class PayrollController extends Controller
         foreach ($userTags as $dates) {
             foreach ($dates as &$tags){
                 foreach ($tags as $index => $tag){
-                    if($index >= count($tags) - 1) continue;
+                    if($tag->status !== 'READY' || $index >= count($tags) - 1) continue;
                     $startTime = new DateTime($tag->created_at->format('Y-m-d H:i:s'));
                     $endTime = new DateTime($tags[$index + 1]->created_at->format('Y-m-d H:i:s'));
                     $difference = $startTime->diff($endTime);
@@ -42,6 +42,13 @@ class PayrollController extends Controller
                     $summary[$value->user_id]['duration'] += $value->duration;
                 }
             }
+        }
+        foreach ($summary as &$tag){
+            // Get total hours Worked
+            $totalHoursWorked = sprintf('%.2f',  $tag['duration'] / 60);
+            // Get total Earnings
+            $totalEarnings = $totalHoursWorked * 5;
+            $tag['totalEarnings'] = $totalEarnings;
         }
         // Get the total minutes worked
         // Get the total minutes worked

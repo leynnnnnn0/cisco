@@ -21,6 +21,7 @@
                             <x-td>August 1, 2024</x-td>
                             <x-td>August 15, 2024</x-td>
                             <x-td>{{ $time['duration'] }}</x-td>
+                            <x-td>${{ $time['totalEarnings'] }}</x-td>
                             <x-td>Pending</x-td>
                         </tr>
                     @endforeach
