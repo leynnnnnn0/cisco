@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatusController;
 use App\Models\Schedule;
@@ -13,9 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/excel', [ExcelController::class, 'index'])->name('excel');
 Route::get('status/export/{id}/{from}/{to}', [StatusController::class, 'export', 'id', 'from', 'to']);
 
-Route::get('/payroll', function (){
-   return view('payroll');
-});
+Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll');
 
 Route::post('/end-of-shift', [StatusController::class, 'destroy'])->middleware('auth');
 Route::get('employees-tag', [StatusController::class, 'index'])->middleware('auth');

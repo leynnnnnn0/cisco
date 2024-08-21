@@ -2,6 +2,30 @@
     <div class="flex h-full">
         <x-sidebar/>
         <div class="flex-1 flex flex-col gap-2 p-2">
+            <h1 class="font-light text-lg">Payroll</h1>
+            <table class="w-full border border-gray-200">
+                <thead class="bg-black/10 p-4">
+                <tr>
+                    <x-th>Name</x-th>
+                    <x-th>From</x-th>
+                    <x-th>To</x-th>
+                    <x-th>Total Hours Worked</x-th>
+                    <x-th>Net Salary</x-th>
+                    <x-th>Status</x-th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach($summary as $key => $time)
+                        <tr>
+                            <x-td>{{ $key }}</x-td>
+                            <x-td>August 1, 2024</x-td>
+                            <x-td>August 15, 2024</x-td>
+                            <x-td>{{ $time['duration'] }}</x-td>
+                            <x-td>Pending</x-td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 </x-app-layout>
