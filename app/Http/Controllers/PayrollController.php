@@ -18,13 +18,21 @@ class PayrollController extends Controller
         // Group the tags by their owner and date
         $userTags = [];
         foreach ($tags as $tag) {
+            $tag->username = $tag->user->name;
             $userTags[$tag->user_id][$tag->created_at->format('Y-m-d')][] = $tag;
         }
         // Get the duration of each tags
         foreach ($userTags as $dates) {
             foreach ($dates as &$tags){
                 foreach ($tags as $index => $tag){
-                    if($tag->status !== 'READY' || $index >= count($tags) - 1) continue;
+//                    // TODO
+//                    // Need to check the overtime hours/minutes
+//                    if($tag->status === 'END OF SHIFT'){
+//                        if($tag->created_at->format('H:i:s') > '17:00:00'){
+//
+//                        }
+//                    }
+                    if($index >= count($tags) - 1) continue;
                     $startTime = new DateTime($tag->created_at->format('Y-m-d H:i:s'));
                     $endTime = new DateTime($tags[$index + 1]->created_at->format('Y-m-d H:i:s'));
                     $difference = $startTime->diff($endTime);
@@ -39,7 +47,18 @@ class PayrollController extends Controller
                 foreach ($tag as $value){
                     if(!array_key_exists($value->user_id, $summary))
                         $summary[$value->user_id]['duration'] = 0;
-                    $summary[$value->user_id]['duration'] += $value->duration;
+                        $summary[$value->user_id]['username'] = $value->username;
+                    if($value->created_at->format('H:i:s') < '08:00:00'){
+                        $timeIn = new DateTime($value->created_at->format('H:i:s'));
+                        $earlyInMinutes = $timeIn->diff(new DateTime('08:00:00'));
+                        $value->duration -= ($earlyInMinutes->h * 60) + $earlyInMinutes->i;
+                    }
+                    if($value->status === 'BREAK' && $value->duration < 15)
+                        $summary[$value->user_id]['duration'] += 15 - $value->duration;
+                    if($value->status === 'LUNCH' && $value->duration < 60)
+                        $summary[$value->user_id]['duration'] += 60 - $value->duration;
+                    if($value->status === 'READY')
+                        $summary[$value->user_id]['duration'] += $value->duration;
                 }
             }
         }
@@ -48,26 +67,13 @@ class PayrollController extends Controller
             $totalHoursWorked = sprintf('%.2f',  $tag['duration'] / 60);
             // Get total Earnings
             $totalEarnings = $totalHoursWorked * 5;
+            $tag['totalHoursWorked'] = $totalHoursWorked;
             $tag['totalEarnings'] = $totalEarnings;
         }
+
         // Get the total minutes worked
         // Get the total minutes worked
         return view('payroll', ['summary' => $summary]);
     }
 
-    function getTags($tags): mixed
-    {
-        $tags = $tags->map(function ($tag, $index) use ($tags) {
-            if ($index < count($tags) - 1) {
-                $tagTime = new DateTime($tag->created_at->format('Y-m-d H:i:s'));
-                $endTagTime = new DateTime($tags[$index + 1]->created_at->format('Y-m-d H:i:s'));
-                $interval = $endTagTime->diff($tagTime);
-                $tag->duration = sprintf('%02d:%02d:%02d', $interval->h, $interval->i, $interval->s);
-            } else {
-                $tag->duration = 'N/A'; // Or some other default value for the last item
-            }
-            return $tag;
-        });
-        return $tags;
-    }
 }
