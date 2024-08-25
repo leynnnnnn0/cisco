@@ -27,6 +27,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="flex justify-center mt-5">
+                <a href="/generate-pdf" class="hover:bg-opacity-75 transition-colors duration-300 bg-blue-500 px-5 py-2 rounded-lg text-white font-bold">Process Payroll</a>
+            </div>
         </div>
     </div>
 </x-app-layout>

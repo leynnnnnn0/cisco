@@ -76,4 +76,10 @@ class PayrollController extends Controller
         return view('payroll', ['summary' => $summary]);
     }
 
+    public function processPayroll()
+    {
+        // Create pdf file of payslip and send it to all employees
+        // Note: They have to be notified
+    }
+
 }

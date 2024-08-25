@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Events\StatusChange;
 use App\Exports\StatusExport;
+use App\Models\Schedule;
 use App\Models\Status;
 use App\Models\User;
+use App\Services\Duration;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -14,11 +17,32 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class StatusController extends Controller
 {
+    protected $duration;
+
+    function __construct(Duration $duration)
+    {
+        $this->duration = $duration;
+    }
     public function index()
     {
         $status = Status::with('user')->latest()->paginate(20);
         $names = User::all()->pluck('name', 'id')->toArray();
         return view('employees-tag', ['status' => $status, 'names' => $names]);
+    }
+
+    public function getTags()
+    {
+        $tags = Status::where('user_id', Auth::id())->whereDate('created_at', Carbon::today())->get();
+        $schedule = Schedule::where('user_id', Auth::id())->first();
+        $tags = $this->duration->getDurationFromCollection($tags);
+        return view('tags-history', ['tags' => $tags, 'schedule' => $schedule]);
+    }
+
+    public function tags()
+    {
+        $tags = Status::where('user_id', Auth::id())->whereDate('created_at', request('date'))->get();
+        $tags = $this->duration->getDurationFromCollection($tags);
+        return json_encode(['data' => $tags]);
     }
 
     public function search()
